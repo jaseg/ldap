@@ -54,14 +54,14 @@ func encodeAddRequest(addReq *AddRequest) (*ber.Packet, error) {
 
 	attributeList := ber.Encode(ber.ClassUniversal, ber.TypeConstructed, ber.TagSequence, nil, "AttributeList")
 
-	for _, attr := range addReq.Entry.Attributes {
+	for name,values := range addReq.Entry.Attributes {
 		attribute := ber.Encode(ber.ClassUniversal, ber.TypeConstructed, ber.TagSequence, nil, "Attribute")
-		attribute.AppendChild(ber.NewString(ber.ClassUniversal, ber.TypePrimative, ber.TagOctetString, attr.Name, "Attribute Desc"))
-		if len(attr.Values) == 0 {
-			return nil, NewLDAPError(ErrorEncoding, "attribute "+attr.Name+" had no values.")
+		attribute.AppendChild(ber.NewString(ber.ClassUniversal, ber.TypePrimative, ber.TagOctetString, name, "Attribute Desc"))
+		if len(values) == 0 {
+			return nil, NewLDAPError(ErrorEncoding, "attribute "+name+" had no values.")
 		}
 		valuesSet := ber.Encode(ber.ClassUniversal, ber.TypeConstructed, ber.TagSet, nil, "Attribute Value Set")
-		for _, val := range attr.Values {
+		for _, val := range values {
 			valuesSet.AppendChild(ber.NewString(ber.ClassUniversal, ber.TypePrimative, ber.TagOctetString, val, "AttributeValue"))
 		}
 		attribute.AppendChild(valuesSet)
@@ -82,21 +82,21 @@ func NewAddRequest(dn string) (req *AddRequest) {
 }
 
 func (req *AddRequest) AddAttribute(attr *EntryAttribute) {
-	req.Entry.AddAttributeValues(attr.Name, attr.Values)
+	req.Entry.Attributes[attr.Name] = attr.Values
 }
 
 func (req *AddRequest) AddAttributes(attrs []EntryAttribute) {
 	for _, attr := range attrs {
-		req.Entry.AddAttributeValues(attr.Name, attr.Values)
+		req.Entry.Attributes[attr.Name] = attr.Values
 	}
 }
 
 // DumpAddRequest - Basic LDIF "like" dump for testing, no formating, etc
 func (addReq *AddRequest) String() (dump string) {
 	dump = fmt.Sprintf("dn: %s\n", addReq.Entry.DN)
-	for _, attr := range addReq.Entry.Attributes {
-		for _, val := range attr.Values {
-			dump += fmt.Sprintf("%s: %s\n", attr.Name, val)
+	for name,values := range addReq.Entry.Attributes {
+		for _, val := range values {
+			dump += fmt.Sprintf("%s: %s\n", name, val)
 		}
 	}
 	dump += fmt.Sprintf("\n")

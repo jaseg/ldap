@@ -231,15 +231,14 @@ func decodeSearchResponse(packet *ber.Packet) (discreteSearchResult *DiscreteSea
 	switch packet.Children[1].Tag {
 	case SearchResultEntry:
 		discreteSearchResult.SearchResultType = SearchResultEntry
-		entry := new(Entry)
-		entry.DN = packet.Children[1].Children[0].Value.(string)
+		entry := NewEntry(packet.Children[1].Children[0].Value.(string))
 		for _, child := range packet.Children[1].Children[1].Children {
-			attr := new(EntryAttribute)
-			attr.Name = child.Children[0].Value.(string)
+			name := child.Children[0].Value.(string)
+			values := []string{}
 			for _, value := range child.Children[1].Children {
-				attr.Values = append(attr.Values, value.Value.(string))
+				values = append(values, value.Value.(string))
 			}
-			entry.Attributes = append(entry.Attributes, attr)
+			entry.Attributes[name] = values
 		}
 		discreteSearchResult.Entry = entry
 		return discreteSearchResult, nil

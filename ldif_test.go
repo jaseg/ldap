@@ -92,7 +92,7 @@ func TestLDIFOpenAndRead(t *testing.T) {
 		t.Errorf("record 0: record.RecordType() mismatch")
 	}
 	entry := record.(*Entry)
-	if entry.GetAttributeValues("description")[0] != "a multi-line attribute value" {
+	if entry.Attributes["description"][0] != "a multi-line attribute value" {
 		t.Errorf("record 0: description mismatch")
 	}
 	fmt.Printf("0 (entry): DN: %s\n", entry.DN)
@@ -108,7 +108,7 @@ func TestLDIFOpenAndRead(t *testing.T) {
 		t.Errorf("record 1: record.RecordType() mismatch")
 	}
 	entry = record.(*Entry)
-	if entry.GetAttributeValues("description")[0] != "This text was originally base64 encoded." {
+	if entry.Attributes["description"][0] != "This text was originally base64 encoded." {
 		t.Errorf("record 1: description mismatch")
 	}
 	fmt.Printf("1 (entry): DN: %s\n", entry.DN)
@@ -185,6 +185,6 @@ func TestLDIFOpenAndRead(t *testing.T) {
 	//	}
 	//	entry := record.(*Entry)
 	//	fmt.Println(entry.DN)
-	//	fmt.Println(entry.GetAttributeValue("entryUUID"))
+	//	fmt.Println(entry.Attributes["entryUUID"]))
 	//}
 }

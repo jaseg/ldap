@@ -232,9 +232,14 @@ func ldifLinesToEntryRecord(dn string, lines [][]byte) (*Entry, error) {
 		if separator {
 			continue // -
 		}
+
 		attributeName := string(bAttr)
-		entry.AddAttributeValue(attributeName, string(bValue))
-		//log.Printf("processed: %s: %s\n", attr, string(bValue))
+		val,ok := entry.Attributes[attributeName]
+		if !ok {
+			val = make([]string, 0)
+		}
+		entry.Attributes[attributeName] = append(val, string(bValue))
+		//log.Printf("processed: %s: %s\n", attributeName, string(bValue))
 	}
 	//fmt.Println(entry)
 	return entry, nil

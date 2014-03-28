@@ -102,14 +102,14 @@ func (lw *LDIFWriter) writeDN(DN string) (err error) {
 }
 
 func (lw *LDIFWriter) writeEntry(e *Entry) error {
-	for _, attr := range e.Attributes {
-		for _, val := range attr.Values {
-			if lw.EncAsBinary(attr.Name) || NeedsBase64Encoding(val) {
-				if err := lw.writeEncAttr(attr.Name, val); err != nil {
+	for name, vals := range e.Attributes {
+		for _, val := range vals {
+			if lw.EncAsBinary(name) || NeedsBase64Encoding(val) {
+				if err := lw.writeEncAttr(name, val); err != nil {
 					return err
 				}
 			} else {
-				if err := lw.writeAttrLine(attr.Name, val); err != nil {
+				if err := lw.writeAttrLine(name, val); err != nil {
 					return err
 				}
 			}

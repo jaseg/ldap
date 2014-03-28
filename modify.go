@@ -23,12 +23,6 @@ var ModMap map[uint8]string = map[uint8]string{
 	ModIncrement: "increment",
 }
 
-/* Reuse search struct, should Values be a [][]byte
-type EntryAttribute struct {
-	Name   string
-	Values []string
-}
-*/
 type Mod struct {
 	ModOperation uint8
 	Modification EntryAttribute
